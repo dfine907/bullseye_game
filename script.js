@@ -14,6 +14,10 @@ window.addEventListener('load', function () {
       this.collisionX = this.game.width * 0.5
       this.collisionY = this.game.height * 0.5
       this.collisionRadius = 50
+      this.speedX = 0
+      this.speedY = 0
+      this.dx = 0
+      this.dy = 0
     }
 
     draw(context) {
@@ -36,8 +40,13 @@ window.addEventListener('load', function () {
       context.stroke()
     }
     update() {
-        this.collisionX = this.game.mouse.x
-        this.collisionY = this.game.mouse.y
+      this.dx = this.game.mouse.x - this.collisionX
+      this.dy = this.game.mouse.y - this.collisionY
+      const distance = Math.hypot(this.dy, this.dx)
+      this.speedX = this.dx / distance || 0
+      this.speedY = this.dy / distance || 0
+      this.collisionX += this.speedX
+      this.collisionY += this.speedY
     }
   }
 
@@ -67,8 +76,10 @@ window.addEventListener('load', function () {
       })
 
       canvas.addEventListener('mousemove', (event) => {
-        this.mouse.x = event.offsetX
-        this.mouse.y = event.offsetY
+        if(this.mouse.pressed) {
+          this.mouse.x = event.offsetX
+          this.mouse.y = event.offsetY
+        }
       })
     }
     render(context) {
@@ -78,8 +89,6 @@ window.addEventListener('load', function () {
   }
 
   const game = new Game(canvas)
-  
-  
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -89,3 +98,5 @@ window.addEventListener('load', function () {
 
   animate()
 })
+
+//ENDED VIDEO AT  24:29
