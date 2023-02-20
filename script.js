@@ -18,7 +18,7 @@ window.addEventListener('load', function () {
       this.speedY = 0
       this.dx = 0
       this.dy = 0
-      this.speedModifier = 20
+      this.speedModifier = 5
     }
 
     draw(context) {
@@ -40,6 +40,7 @@ window.addEventListener('load', function () {
       context.lineTo(this.game.mouse.x, this.game.mouse.y)
       context.stroke()
     }
+
     update() {
       this.dx = this.game.mouse.x - this.collisionX
       this.dy = this.game.mouse.y - this.collisionY
@@ -56,9 +57,16 @@ window.addEventListener('load', function () {
       this.collisionY += this.speedY * this.speedModifier
       //collision with obstacles
       this.game.obstacles.forEach((obstacle) => {
-        if (this.game.checkCollision(this, obstacle)) {
-          console.log('CRASH!')
-        }
+        // [(distance < sumOfRadii), distance, sumOfRadii, dx, dy] 
+        //use destructuring from line 162
+        let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, obstacle)
+         //let collision = game.checkCollision(this, obstacle)[0]
+         if(collision) {
+          const unit_x = dx / distance
+          const unit_y = dy / distance
+          this.collisionX = obstacle.collisionX + (sumOfRadii + 1) * unit_x
+          this.collisionY = obstacle.collisionY + (sumOfRadii + 1) * unit_y
+         }
       })
     }
   }
@@ -144,9 +152,10 @@ window.addEventListener('load', function () {
       })
     }
     render(context) {
+       this.obstacles.forEach((obstacle) => obstacle.draw(context))
       this.player.draw(context)
       this.player.update()
-      this.obstacles.forEach((obstacle) => obstacle.draw(context))
+     
     }
 
     checkCollision(a, b) {
@@ -155,7 +164,8 @@ window.addEventListener('load', function () {
       const dy = a.collisionY - b.collisionY
       const distance = Math.hypot(dy, dx)
       const sumOfRadii = a.collisionRadius + b.collisionRadius
-      return distance < sumOfRadii //returns true if there is a collision
+      return [(distance < sumOfRadii), distance, sumOfRadii, dx, dy] 
+      //return an array with distance < sumOfRadii rtn true or false
     }
 
     init() {
