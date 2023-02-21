@@ -5,7 +5,7 @@ window.addEventListener('load', function () {
   canvas.height = 720
 
   ctx.fillStyle = 'white'
-  ctx.lineWidth = 4
+  ctx.lineWidth = 3
   ctx.strokeStyle = 'white'
 
   class Player {
@@ -19,9 +19,27 @@ window.addEventListener('load', function () {
       this.dx = 0
       this.dy = 0
       this.speedModifier = 5
+      this.spriteWidth = 255
+      this.spriteHeight = 255
+      this.width = this.spriteWidth
+      this.height = this.spriteHeight
+      this.spriteX
+      this.spriteY
+      this.image = document.getElementById('bull')
     }
 
     draw(context) {
+      context.drawImage(
+        this.image,
+        0,
+        0,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.spriteX,
+        this.spriteY,
+        this.width,
+        this.height
+      )
       context.beginPath()
       context.arc(
         this.collisionX,
@@ -55,18 +73,24 @@ window.addEventListener('load', function () {
 
       this.collisionX += this.speedX * this.speedModifier
       this.collisionY += this.speedY * this.speedModifier
+
+      this.spriteX = this.collisionX - this.width * 0.5
+      this.spriteY = this.collisionY - this.height * 0.5 - 100
       //collision with obstacles
       this.game.obstacles.forEach((obstacle) => {
-        // [(distance < sumOfRadii), distance, sumOfRadii, dx, dy] 
+        // [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
         //use destructuring from line 162
-        let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, obstacle)
-         //let collision = game.checkCollision(this, obstacle)[0]
-         if(collision) {
+        let [collision, distance, sumOfRadii, dx, dy] =
+          this.game.checkCollision(this, obstacle)
+        //let collision = game.checkCollision(this, obstacle)[0]
+        if (collision) {
           const unit_x = dx / distance
           const unit_y = dy / distance
-          this.collisionX = obstacle.collisionX + (sumOfRadii + 1) * unit_x
-          this.collisionY = obstacle.collisionY + (sumOfRadii + 1) * unit_y
-         }
+          this.collisionX =
+            obstacle.collisionX + (sumOfRadii + 1) * unit_x
+          this.collisionY =
+            obstacle.collisionY + (sumOfRadii + 1) * unit_y
+        }
       })
     }
   }
@@ -152,10 +176,9 @@ window.addEventListener('load', function () {
       })
     }
     render(context) {
-       this.obstacles.forEach((obstacle) => obstacle.draw(context))
+      this.obstacles.forEach((obstacle) => obstacle.draw(context))
       this.player.draw(context)
       this.player.update()
-     
     }
 
     checkCollision(a, b) {
@@ -164,7 +187,7 @@ window.addEventListener('load', function () {
       const dy = a.collisionY - b.collisionY
       const distance = Math.hypot(dy, dx)
       const sumOfRadii = a.collisionRadius + b.collisionRadius
-      return [(distance < sumOfRadii), distance, sumOfRadii, dx, dy] 
+      return [distance < sumOfRadii, distance, sumOfRadii, dx, dy]
       //return an array with distance < sumOfRadii rtn true or false
     }
 
@@ -217,4 +240,4 @@ window.addEventListener('load', function () {
   animate()
 })
 
-//ENDED VIDEO AT  54:27
+//ENDED VIDEO AT  1:09:40
