@@ -196,17 +196,22 @@ window.addEventListener('load', function () {
       this.game = game
       this.collisionRadius = 40
       this.margin = this.collisionRadius * 2
-      this.collisionX = this.margin + (Math.random() * (this.game.width - this.margin * 2))
+      this.collisionX =
+        this.margin +
+        Math.random() * (this.game.width - this.margin * 2)
 
-      this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin -this.margin))
+      this.collisionY =
+        this.game.topMargin +
+        Math.random() *
+          (this.game.height - this.game.topMargin - this.margin)
       this.collisionRadius = 40
       this.image = document.getElementById('egg')
       this.spriteWidth = 110
       this.spriteHeight = 135
       this.width = this.spriteWidth
       this.height = this.spriteHeight
-      this.spriteX = this.collisionX - this.width * 0.5
-      this.spriteY = this.collisionY - this.height * 0.5 - 30
+      this.spriteX
+      this.spriteY
     }
 
     draw(context) {
@@ -228,8 +233,24 @@ window.addEventListener('load', function () {
       }
     }
 
-    update(){
-
+    update() {
+      this.spriteX = this.collisionX - this.width * 0.5
+      this.spriteY = this.collisionY - this.height * 0.5 - 30
+      let collisionObjects = [
+        this.game.player,
+        ...this.game.obstacles,
+      ]
+      collisionObjects.forEach((object) => {
+        //destructure: [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
+        let [collision, distance, sumOfRadii, dx, dy] =
+          this.game.checkCollision(this, object)
+          if(collision) {
+            const unit_x = dx / distance
+            const unit_y = dy / distance
+            this.collisionX = object.collisionX + (sumOfRadii + 1) * unit_x
+            this.collisionY = object.collisionY + (sumOfRadii + 1) * unit_y
+          }
+      })
     }
   }
 
@@ -286,7 +307,11 @@ window.addEventListener('load', function () {
       if (this.timer > this.interval) {
         context.clearRect(0, 0, this.width, this.height)
         this.obstacles.forEach((obstacle) => obstacle.draw(context))
-        this.eggs.forEach((egg) => egg.draw(context))
+
+        this.eggs.forEach((egg) => {
+          egg.draw(context)
+          egg.update()
+        })
         this.player.draw(context)
         this.player.update()
         this.timer = 0
@@ -373,4 +398,4 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-//ENDED VIDEO AT 1:45:50  / NEXT IS  LESSON 19 Egg Physics
+//ENDED VIDEO AT 1:51: 27 / NEXT IS  LESSON 20 draw order
