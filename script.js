@@ -189,6 +189,8 @@ window.addEventListener('load', function () {
         context.stroke()
       }
     }
+
+    update() {}
   }
 
   class Egg {
@@ -244,12 +246,14 @@ window.addEventListener('load', function () {
         //destructure: [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
         let [collision, distance, sumOfRadii, dx, dy] =
           this.game.checkCollision(this, object)
-          if(collision) {
-            const unit_x = dx / distance
-            const unit_y = dy / distance
-            this.collisionX = object.collisionX + (sumOfRadii + 1) * unit_x
-            this.collisionY = object.collisionY + (sumOfRadii + 1) * unit_y
-          }
+        if (collision) {
+          const unit_x = dx / distance
+          const unit_y = dy / distance
+          this.collisionX =
+            object.collisionX + (sumOfRadii + 1) * unit_x
+          this.collisionY =
+            object.collisionY + (sumOfRadii + 1) * unit_y
+        }
       })
     }
   }
@@ -265,12 +269,14 @@ window.addEventListener('load', function () {
       this.fps = 80
       this.timer = 0
       this.interval = 1000 / this.fps
+
       this.eggTimer = 0
-      this.eggInterval = 500
+      this.eggInterval = 1000
       this.numberOfObstacles = 10
+      this.maxEggs = 20
       this.obstacles = []
       this.eggs = []
-      this.maxEggs = 10
+      this.gameObjects = []
       this.mouse = {
         x: this.width * 0.5,
         y: this.height * 0.5,
@@ -306,14 +312,20 @@ window.addEventListener('load', function () {
     render(context, deltaTime) {
       if (this.timer > this.interval) {
         context.clearRect(0, 0, this.width, this.height)
-        this.obstacles.forEach((obstacle) => obstacle.draw(context))
-
-        this.eggs.forEach((egg) => {
-          egg.draw(context)
-          egg.update()
+        this.gameObjects = [
+          this.player,
+          ...this.eggs,
+          ...this.obstacles,
+        ]
+        //sort by verticle position
+        this.gameObjects.sort((a, b) => {
+          return a.collisionY - b.collisionY
         })
-        this.player.draw(context)
-        this.player.update()
+        this.gameObjects.forEach((object) => {
+          object.draw(context)
+          object.update()
+        })
+
         this.timer = 0
       }
       this.timer += deltaTime
@@ -325,7 +337,6 @@ window.addEventListener('load', function () {
       ) {
         this.addEgg()
         this.eggTimer = 0
-        console.log(this.eggs)
       } else {
         this.eggTimer += deltaTime
       }
@@ -398,4 +409,4 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-//ENDED VIDEO AT 1:51: 27 / NEXT IS  LESSON 20 draw order
+//ENDED VIDEO AT 1:59: 45 / NEXT IS  LESSON 21 Adding Enemy Class
