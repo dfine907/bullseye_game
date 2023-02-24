@@ -241,6 +241,7 @@ window.addEventListener('load', function () {
       let collisionObjects = [
         this.game.player,
         ...this.game.obstacles,
+        ...this.game.enemies
       ]
       collisionObjects.forEach((object) => {
         //destructure: [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
@@ -262,14 +263,19 @@ window.addEventListener('load', function () {
     constructor(game) {
       this.game = game
       this.collisionRadius = 30
-      this.speedX = Math.random() * 3 + 5
+      this.speedX = Math.random() * 3 + 0.5
       this.image = document.getElementById('toad')
       this.spriteWidth = 140
       this.spriteHeight = 260
       this.width = this.spriteWidth
       this.height = this.spriteHeight
-      this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5
-      this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin))
+      this.collisionX =
+        this.game.width +
+        this.width +
+        Math.random() * this.game.width * 0.5
+      this.collisionY =
+        this.game.topMargin +
+        Math.random() * (this.game.height - this.game.topMargin)
       this.spriteX
       this.spriteY
     }
@@ -299,9 +305,31 @@ window.addEventListener('load', function () {
       this.collisionX -= this.speedX
 
       if (this.spriteX + this.width < 0) {
-        this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5
-        this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin))
+        this.collisionX =
+          this.game.width +
+          this.width +
+          Math.random() * this.game.width * 0.5
+        this.collisionY =
+          this.game.topMargin +
+          Math.random() * (this.game.height - this.game.topMargin)
       }
+      let collisionObjects = [
+        this.game.player,
+        ...this.game.obstacles
+      ]
+      collisionObjects.forEach((object) => {
+        //destructure: [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
+        let [collision, distance, sumOfRadii, dx, dy] =
+          this.game.checkCollision(this, object)
+        if (collision) {
+          const unit_x = dx / distance
+          const unit_y = dy / distance
+          this.collisionX =
+            object.collisionX + (sumOfRadii + 1) * unit_x
+          this.collisionY =
+            object.collisionY + (sumOfRadii + 1) * unit_y
+        }
+      })
     }
   }
 
@@ -397,7 +425,7 @@ window.addEventListener('load', function () {
       const dy = a.collisionY - b.collisionY
       const distance = Math.hypot(dy, dx)
       const sumOfRadii = a.collisionRadius + b.collisionRadius
-      return [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
+      return [distance < sumOfRadii, distance, sumOfRadii, dx, dy]
       //return an array with distance < sumOfRadii rtn true or false
     }
 
