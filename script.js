@@ -258,6 +258,53 @@ window.addEventListener('load', function () {
     }
   }
 
+  class Enemy {
+    constructor(game) {
+      this.game = game
+      this.collisionRadius = 30
+      this.speedX = Math.random() * 3 + 5
+      this.image = document.getElementById('toad')
+      this.spriteWidth = 140
+      this.spriteHeight = 260
+      this.width = this.spriteWidth
+      this.height = this.spriteHeight
+      this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5
+      this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin))
+      this.spriteX
+      this.spriteY
+    }
+
+    draw(context) {
+      context.drawImage(this.image, this.spriteX, this.spriteY)
+      if (this.game.debug) {
+        context.beginPath()
+        context.arc(
+          this.collisionX,
+          this.collisionY,
+          this.collisionRadius,
+          0,
+          Math.PI * 2
+        )
+        context.save()
+        context.globalAlpha = 0.5
+        context.fill()
+        context.restore()
+        context.stroke()
+      }
+    }
+
+    update() {
+      this.spriteX = this.collisionX - this.width * 0.5
+      this.spriteY = this.collisionY - this.height * 0.5 - 100
+      this.collisionX -= this.speedX
+
+      if (this.spriteX + this.width < 0) {
+        this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5
+        this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin))
+      }
+    }
+  }
+
   class Game {
     constructor(canvas) {
       this.canvas = canvas
@@ -266,7 +313,7 @@ window.addEventListener('load', function () {
       this.topMargin = 260
       this.debug = true
       this.player = new Player(this)
-      this.fps = 80
+      this.fps = 70
       this.timer = 0
       this.interval = 1000 / this.fps
 
@@ -276,6 +323,7 @@ window.addEventListener('load', function () {
       this.maxEggs = 20
       this.obstacles = []
       this.eggs = []
+      this.enemies = []
       this.gameObjects = []
       this.mouse = {
         x: this.width * 0.5,
@@ -316,6 +364,7 @@ window.addEventListener('load', function () {
           this.player,
           ...this.eggs,
           ...this.obstacles,
+          ...this.enemies,
         ]
         //sort by verticle position
         this.gameObjects.sort((a, b) => {
@@ -348,7 +397,7 @@ window.addEventListener('load', function () {
       const dy = a.collisionY - b.collisionY
       const distance = Math.hypot(dy, dx)
       const sumOfRadii = a.collisionRadius + b.collisionRadius
-      return [distance < sumOfRadii, distance, sumOfRadii, dx, dy]
+      return [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
       //return an array with distance < sumOfRadii rtn true or false
     }
 
@@ -356,7 +405,14 @@ window.addEventListener('load', function () {
       this.eggs.push(new Egg(this))
     }
 
+    addEnemy() {
+      this.enemies.push(new Enemy(this))
+    }
+
     init() {
+      for (let i = 0; i < 3; i += 1) {
+        this.addEnemy()
+      }
       let attempts = 0
       while (
         this.obstacles.length < this.numberOfObstacles &&
@@ -409,4 +465,5 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-//ENDED VIDEO AT 1:59: 45 / NEXT IS  LESSON 21 Adding Enemy Class
+//ENDED VIDEO AT 1:59: 45 / NEXT IS  LESSON 21 Adding Enemy Class  START HERE!!!
+//ended mid way: 2:06: 50
