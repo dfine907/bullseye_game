@@ -521,6 +521,15 @@ window.addEventListener('load', function () {
       } else {
         this.eggTimer += deltaTime
       }
+        //draw game status text:
+        context.save()
+        context.textAlign = 'left'
+        context.fillText('Score: ' + this.score, 25, 50)
+        if(this.debug) {
+          context.fillText('Lost: ' + this.lostHatchlings, 25, 100)
+        }
+        context.restore()
+
     }
 
     checkCollision(a, b) {
@@ -608,4 +617,4 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-// ENDED VIDEO AT 2:20: 55 (Where Egg Timer, Marked for Deletion)  I have an error after this section in the video.
+// Start at Gaining Score points. 
