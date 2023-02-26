@@ -238,21 +238,24 @@ window.addEventListener('load', function () {
         context.restore()
         context.stroke()
         const displayTimer = (this.hatchTimer * 0.001).toFixed(0)
-        context.fillText(displayTimer, this.collisionX, this.collisionY - this.collisionRadius * 2.5)
+        context.fillText(
+          displayTimer,
+          this.collisionX,
+          this.collisionY - this.collisionRadius * 2.5
+        )
       }
     }
 
     update(deltaTime) {
       this.spriteX = this.collisionX - this.width * 0.5
       this.spriteY = this.collisionY - this.height * 0.5 - 30
-      //collisions
+      // collisions
       let collisionObjects = [
         this.game.player,
         ...this.game.obstacles,
         ...this.game.enemies,
       ]
       collisionObjects.forEach((object) => {
-        //destructure: [(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
         let [collision, distance, sumOfRadii, dx, dy] =
           this.game.checkCollision(this, object)
         if (collision) {
@@ -265,14 +268,18 @@ window.addEventListener('load', function () {
         }
       })
       //hatching
-      if(this.hatchTimer > this.hatchInterval) {
-          this.markedForDeletion = true
-          this.game.removeGameObjects()
-          
+      if (
+        this.hatchTimer > this.hatchInterval ||
+        this.collisionY < this.game.topMargin
+      ) {
+        this.game.hatchlings.push(
+          new Larva(this.game, this.collisionX, this.collisionY)
+        )
+        this.markedForDeletion = true
+        this.game.removeGameObjects()
       } else {
         this.hatchTimer += deltaTime
       }
-
     }
   }
 
@@ -293,13 +300,33 @@ window.addEventListener('load', function () {
     }
 
     draw(context) {
-      context.drawImage(this.image, this.spriteX, this.spriteY)
+      context.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height)
+      if (this.game.debug) {
+        context.beginPath()
+        context.arc(
+          this.collisionX,
+          this.collisionY,
+          this.collisionRadius,
+          0,
+          Math.PI * 2
+        )
+        context.save()
+        context.globalAlpha = 0.5
+        context.fill()
+        context.restore()
+        context.stroke()
+      }
     }
 
     update() {
       this.collisionY -= this.speedY
       this.spriteX = this.collisionX - this.width * 0.5
-      this.sprtieY = this.collisionY - this.height * 0.5
+      this.sprtieY = this.collisionY - this.height * 0.5 - 50
+      //move to safety (top Margin)
+      if (this.collisionY < this.game.topMargin) {
+        this.markedForDeletion = true
+        this.game.removeGameObjects()
+      }
     }
   }
   class Enemy {
@@ -395,6 +422,7 @@ window.addEventListener('load', function () {
       this.obstacles = []
       this.eggs = []
       this.enemies = []
+      this.hatchlings = []
       this.gameObjects = []
       this.mouse = {
         x: this.width * 0.5,
@@ -436,6 +464,7 @@ window.addEventListener('load', function () {
           ...this.eggs,
           ...this.obstacles,
           ...this.enemies,
+          ...this.hatchlings,
         ]
         //sort by verticle position
         this.gameObjects.sort((a, b) => {
@@ -481,7 +510,14 @@ window.addEventListener('load', function () {
     }
 
     removeGameObjects() {
-      this.eggs = this.eggs.filter(object => !object.markedForDeletion)
+      this.eggs = this.eggs.filter(
+        (object) => !object.markedForDeletion
+      )
+
+      this.hatchlings = this.hatchlings.filter(
+        (object) => !object.markedForDeletion
+      )
+     
     }
 
     init() {
@@ -540,4 +576,4 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-//ENDED VIDEO AT 2:20: 55 (Where Egg Timer, Marked for Deletion)
+// ENDED VIDEO AT 2:20: 55 (Where Egg Timer, Marked for Deletion)  I have an error after this section in the video.
