@@ -7,6 +7,8 @@ window.addEventListener('load', function () {
   ctx.fillStyle = 'white'
   ctx.lineWidth = 3
   ctx.strokeStyle = 'white'
+  ctx.font = '40px Helvetica'
+  ctx.textAlign = 'center'
 
   class Player {
     constructor(game) {
@@ -214,6 +216,9 @@ window.addEventListener('load', function () {
       this.height = this.spriteHeight
       this.spriteX
       this.spriteY
+      this.hatchTimer = 0
+      this.hatchInterval = 3000
+      this.markedForDeletion = false
     }
 
     draw(context) {
@@ -232,12 +237,15 @@ window.addEventListener('load', function () {
         context.fill()
         context.restore()
         context.stroke()
+        const displayTimer = (this.hatchTimer * 0.001).toFixed(0)
+        context.fillText(displayTimer, this.collisionX, this.collisionY - this.collisionRadius * 2.5)
       }
     }
 
-    update() {
+    update(deltaTime) {
       this.spriteX = this.collisionX - this.width * 0.5
       this.spriteY = this.collisionY - this.height * 0.5 - 30
+      //collisions
       let collisionObjects = [
         this.game.player,
         ...this.game.obstacles,
@@ -256,6 +264,15 @@ window.addEventListener('load', function () {
             object.collisionY + (sumOfRadii + 1) * unit_y
         }
       })
+      //hatching
+      if(this.hatchTimer > this.hatchInterval) {
+          this.markedForDeletion = true
+          this.game.removeGameObjects()
+          
+      } else {
+        this.hatchTimer += deltaTime
+      }
+
     }
   }
 
@@ -426,7 +443,7 @@ window.addEventListener('load', function () {
         })
         this.gameObjects.forEach((object) => {
           object.draw(context)
-          object.update()
+          object.update(deltaTime)
         })
 
         this.timer = 0
@@ -461,6 +478,10 @@ window.addEventListener('load', function () {
 
     addEnemy() {
       this.enemies.push(new Enemy(this))
+    }
+
+    removeGameObjects() {
+      this.eggs = this.eggs.filter(object => !object.markedForDeletion)
     }
 
     init() {
@@ -519,4 +540,4 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-//ENDED VIDEO AT 2:11: 03 NEXT UP LARVA CLASS
+//ENDED VIDEO AT 2:20: 55 (Where Egg Timer, Marked for Deletion)
