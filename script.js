@@ -5,8 +5,8 @@ window.addEventListener('load', function () {
   canvas.height = 720
 
   ctx.fillStyle = 'white'
-  ctx.lineWidth = 3
-  ctx.strokeStyle = 'white'
+  ctx.lineWidth = 2
+  ctx.strokeStyle = 'black'
   ctx.font = '40px Helvetica'
   ctx.textAlign = 'center'
 
@@ -217,7 +217,7 @@ window.addEventListener('load', function () {
       this.spriteX
       this.spriteY
       this.hatchTimer = 0
-      this.hatchInterval = 3000
+      this.hatchInterval = 9000
       this.markedForDeletion = false
     }
 
@@ -373,6 +373,17 @@ window.addEventListener('load', function () {
           this.markedForDeletion = true
           this.game.removeGameObjects()
           this.game.lostHatchlings += 1
+
+          for (let i = 0; i < 5; i += 1) {
+            this.game.particles.push(
+              new Spark(
+                this.game,
+                this.collisionX,
+                this.collisionY,
+                'orange'
+              )
+            )
+          }
         }
       })
     }
@@ -485,7 +496,7 @@ window.addEventListener('load', function () {
   class Firefly extends Particle {
     update() {
       this.angle += this.va
-      this.collisionX += this.speedX
+      this.collisionX += Math.cos(this.angle) * this.speedX
       this.collisionY -= this.speedY
       if (this.collisionY < 0 - this.radius) {
         this.markedForDeletion = true
@@ -495,7 +506,18 @@ window.addEventListener('load', function () {
   }
 
   class Spark extends Particle {
-    update() {}
+    update() {
+      this.angle += this.va * 0.5
+      this.collisionX -= Math.sin(this.angle) * this.speedX
+      this.collisionY -= Math.cos(this.angle) * this.speedY
+      if(this.radius > 0.1) {
+        this.radius -= 0.05
+      }
+      if(this.radius < 0.2) {
+        this.markedForDeletion = true
+        this.game.removeGameObjects()
+      }
+    }
   }
 
   class Game {
@@ -686,4 +708,5 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-// ENDED AT PARTICLE EFFECTS ON UDEMY  no. 27.   Next is section 28 (Lesson 21).
+// ENDED AT PARTICLE EFFECTS ON UDEMY.   Next is section 28 PARTICLE MOTION (Lesson 21).
+//STOPPED at 2:23 udemy on Section 28 Particle Motion. 
