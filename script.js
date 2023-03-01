@@ -393,7 +393,7 @@ window.addEventListener('load', function () {
       this.game = game
       this.collisionRadius = 30
       this.speedX = Math.random() * 3 + 0.5
-      this.image = document.getElementById('toad')
+      this.image = document.getElementById('toads')
       this.spriteWidth = 140
       this.spriteHeight = 260
       this.width = this.spriteWidth
@@ -407,10 +407,22 @@ window.addEventListener('load', function () {
         Math.random() * (this.game.height - this.game.topMargin)
       this.spriteX
       this.spriteY
+      this.frameX = 0
+      this.frameY = Math.floor(Math.random() * 4)
     }
 
     draw(context) {
-      context.drawImage(this.image, this.spriteX, this.spriteY)
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.spriteX,
+        this.spriteY,
+        this.width,
+        this.height
+      )
       if (this.game.debug) {
         context.beginPath()
         context.arc(
@@ -441,6 +453,7 @@ window.addEventListener('load', function () {
         this.collisionY =
           this.game.topMargin +
           Math.random() * (this.game.height - this.game.topMargin)
+        this.frameY = Math.floor(Math.random() * 4)
       }
       let collisionObjects = [
         this.game.player,
@@ -510,10 +523,10 @@ window.addEventListener('load', function () {
       this.angle += this.va * 0.5
       this.collisionX -= Math.sin(this.angle) * this.speedX
       this.collisionY -= Math.cos(this.angle) * this.speedY
-      if(this.radius > 0.1) {
+      if (this.radius > 0.1) {
         this.radius -= 0.05
       }
-      if(this.radius < 0.2) {
+      if (this.radius < 0.2) {
         this.markedForDeletion = true
         this.game.removeGameObjects()
       }
@@ -535,7 +548,7 @@ window.addEventListener('load', function () {
       this.eggTimer = 0
       this.eggInterval = 1000
       this.numberOfObstacles = 10
-      this.maxEggs = 20
+      this.maxEggs = 5
       this.obstacles = []
       this.eggs = []
       this.enemies = []
@@ -707,6 +720,3 @@ window.addEventListener('load', function () {
 
   animate(0)
 })
-
-// ENDED AT PARTICLE EFFECTS ON UDEMY.   Next is section 28 PARTICLE MOTION (Lesson 21).
-//STOPPED at 2:23 udemy on Section 28 Particle Motion. 
