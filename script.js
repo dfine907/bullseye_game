@@ -7,7 +7,7 @@ window.addEventListener('load', function () {
   ctx.fillStyle = 'white'
   ctx.lineWidth = 2
   ctx.strokeStyle = 'black'
-  ctx.font = '40px Helvetica'
+  ctx.font = '40px Bangers'
   ctx.textAlign = 'center'
 
   class Player {
@@ -337,7 +337,10 @@ window.addEventListener('load', function () {
       if (this.collisionY < this.game.topMargin) {
         this.markedForDeletion = true
         this.game.removeGameObjects()
-        this.game.score += 1
+        if (!this.game.gameOver) {
+          this.game.score += 1
+        }
+
         for (let i = 0; i < 3; i += 1) {
           this.game.particles.push(
             new Firefly(
@@ -445,7 +448,7 @@ window.addEventListener('load', function () {
       this.spriteY = this.collisionY - this.height * 0.5 - 100
       this.collisionX -= this.speedX
 
-      if (this.spriteX + this.width < 0) {
+      if (this.spriteX + this.width < 0 && !this.game.gameOver) {
         this.collisionX =
           this.game.width +
           this.width +
@@ -556,6 +559,8 @@ window.addEventListener('load', function () {
       this.particles = []
       this.gameObjects = []
       this.score = 0
+      this.winningScore = 2
+      this.gameOver = false
       this.lostHatchlings = 0
       this.mouse = {
         x: this.width * 0.5,
@@ -616,7 +621,8 @@ window.addEventListener('load', function () {
       //add eggs periodically:
       if (
         this.eggTimer > this.eggInterval &&
-        this.eggs.length < this.maxEggs
+        this.eggs.length < this.maxEggs &&
+        !this.gameOver
       ) {
         this.addEgg()
         this.eggTimer = 0
@@ -631,6 +637,51 @@ window.addEventListener('load', function () {
         context.fillText('Lost: ' + this.lostHatchlings, 25, 100)
       }
       context.restore()
+      // win / lose conditions
+      if (this.score >= this.winningScore) {
+        this.gameOver = true
+        context.save()
+        context.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        context.fillRect(0, 0, this.width, this.height)
+        context.fillStyle = 'white'
+        context.textAlign = 'center'
+        context.shadowOffsetX = 5
+        context.shadowOffsetY = 5
+        context.shadowColor = 'black'
+        let message1
+        let message2
+        if (this.lostHatchlings <= 5) {
+          //win
+          message1 = 'Bullseye!'
+          message2 = 'You bullied the bullies'
+        } else {
+          //lose
+          message1 = 'Bullocks!'
+          message2 =
+            'You lost ' +
+            this.lostHatchlings +
+            ' hatchlings. You pushover! '
+        }
+
+        context.font = '130px Bangers'
+        context.fillText(
+          message1,
+          this.width * 0.5,
+          this.height * 0.5 - 35
+        )
+        context.font = '40px Bangers'
+        context.fillText(
+          message2,
+          this.width * 0.5,
+          this.height * 0.5 + 35
+        )
+        context.fillText(
+          'Final Score is ' + this.score + '. Press R to Restart',
+          this.width * 0.5,
+          this.height * 0.5 + 80
+        )
+        context.restore()
+      }
     }
 
     checkCollision(a, b) {
@@ -666,7 +717,7 @@ window.addEventListener('load', function () {
     }
 
     init() {
-      for (let i = 0; i < 3; i += 1) {
+      for (let i = 0; i < 5; i += 1) {
         this.addEnemy()
       }
       let attempts = 0
