@@ -20,7 +20,7 @@ window.addEventListener('load', function () {
       this.speedY = 0
       this.dx = 0
       this.dy = 0
-      this.speedModifier = 8
+      this.speedModifier = 4
       this.spriteWidth = 256
       this.spriteHeight = 256
       this.width = this.spriteWidth
@@ -30,6 +30,13 @@ window.addEventListener('load', function () {
       this.frameX = 0
       this.frameY = 5
       this.image = document.getElementById('bull')
+    }
+
+    restart() {
+      this.collisionX = this.game.width * 0.5
+      this.collisionY = this.game.height * 0.5
+      this.spriteX = this.collisionX - this.width * 0.5
+      this.spriteY = this.collisionY - this.height * 0.5 - 100
     }
 
     draw(context) {
@@ -332,7 +339,8 @@ window.addEventListener('load', function () {
     update() {
       this.collisionY -= this.speedY
       this.spriteX = this.collisionX - this.width * 0.5
-      this.spriteY = this.collisionY - this.height * 0.5 - 50
+      this.spriteY = this.collisionY - this.height * 0.5 - 40
+
       //move to safety (top Margin)
       if (this.collisionY < this.game.topMargin) {
         this.markedForDeletion = true
@@ -356,6 +364,7 @@ window.addEventListener('load', function () {
       let collisionObjects = [
         this.game.player,
         ...this.game.obstacles,
+        ...this.game.eggs,
       ]
       collisionObjects.forEach((object) => {
         let [collision, distance, sumOfRadii, dx, dy] =
@@ -372,7 +381,10 @@ window.addEventListener('load', function () {
 
       //collsion with enemies:
       this.game.enemies.forEach((enemy) => {
-        if (this.game.checkCollision(this, enemy)[0]) {
+        if (
+          this.game.checkCollision(this, enemy)[0] &&
+          !this.game.gameOver
+        ) {
           this.markedForDeletion = true
           this.game.removeGameObjects()
           this.game.lostHatchlings += 1
@@ -559,7 +571,7 @@ window.addEventListener('load', function () {
       this.particles = []
       this.gameObjects = []
       this.score = 0
-      this.winningScore = 2
+      this.winningScore = 10
       this.gameOver = false
       this.lostHatchlings = 0
       this.mouse = {
@@ -591,6 +603,8 @@ window.addEventListener('load', function () {
       window.addEventListener('keydown', (event) => {
         if (event.key === 'd') {
           this.debug = !this.debug
+        } else if (event.key === 'r') {
+          this.restart()
         }
       })
     }
@@ -714,6 +728,24 @@ window.addEventListener('load', function () {
       this.particles = this.particles.filter(
         (object) => !object.markedForDeletion
       )
+    }
+
+    restart() {
+      this.player.restart()
+      this.obstacles = []
+      this.eggs = []
+      this.enemies = []
+      this.hatchlings = []
+      this.particles = []
+      this.mouse = {
+        x: this.width * 0.5,
+        y: this.height * 0.5,
+        pressed: false,
+      }
+      this.score = 0
+      this.lostHatchlings = 0
+      this.gameOver = false
+      this.init()
     }
 
     init() {
