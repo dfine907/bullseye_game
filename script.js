@@ -664,7 +664,7 @@ window.addEventListener('load', function () {
         context.shadowColor = 'black'
         let message1
         let message2
-        if (this.lostHatchlings <= 5) {
+        if (this.lostHatchlings <= 10) {
           //win
           message1 = 'Bullseye!'
           message2 = 'You bullied the bullies'
