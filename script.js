@@ -395,7 +395,7 @@ window.addEventListener('load', function () {
                 this.game,
                 this.collisionX,
                 this.collisionY,
-                'orange'
+                'red'
               )
             )
           }
@@ -407,7 +407,7 @@ window.addEventListener('load', function () {
     constructor(game) {
       this.game = game
       this.collisionRadius = 30
-      this.speedX = Math.random() * 3 + 0.5
+      this.speedX = Math.random() * 3 + 1
       this.image = document.getElementById('toads')
       this.spriteWidth = 140
       this.spriteHeight = 260
@@ -554,7 +554,7 @@ window.addEventListener('load', function () {
       this.width = this.canvas.width
       this.height = this.canvas.height
       this.topMargin = 260
-      this.debug = true
+      this.debug = false
       this.player = new Player(this)
       this.fps = 70
       this.timer = 0
@@ -571,7 +571,7 @@ window.addEventListener('load', function () {
       this.particles = []
       this.gameObjects = []
       this.score = 0
-      this.winningScore = 10
+      this.winningScore = 30
       this.gameOver = false
       this.lostHatchlings = 0
       this.mouse = {
@@ -803,3 +803,6 @@ window.addEventListener('load', function () {
 
   animate(0)
 })
+
+
+//ended at Restart  Next is Extending enemy class (section 32)
