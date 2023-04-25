@@ -804,5 +804,3 @@ window.addEventListener('load', function () {
   animate(0)
 })
 
-
-//ended at Restart  Next is Extending enemy class (section 32)
