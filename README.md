@@ -20,6 +20,8 @@ In this game, simple trigonometry and vector mathematics are used for collision 
 
 ## Playing the game:
 
+### Objectives: Protect the eggs and push them to the Safe Forest.
+
 In the Bullseye Game, you control the blue character and are tasked with protecting eggs from random incoming monsters that appear from the RIGHT side of the screen.
 
 Safe Zone: The Safe Forest at the top of the screen is where hatchlings and eggs are safe. Yellow sparks signify a successful save, earning you one point. Red sparks indicate a hatchling has been eaten.
@@ -27,13 +29,9 @@ Safe Zone: The Safe Forest at the top of the screen is where hatchlings and eggs
 Hatching Time: Eggs hatch after 9 seconds, making the hatchlings vulnerable to monsters.
 
 
-Objectives:
-
-* Protect the eggs and push them to the Safe Forest.
-
-* Save / Score 30 hatchlings to win.
-
 * The game ends once you score 30 Hatchings, but you win ONLY if 6 or less hatchings were eaten.
+
+* If you save 30 hatchlings before 7 hatclings are eaten, you win the game.
 
 * To restart the game at any time, press r on your keyboard.
 
