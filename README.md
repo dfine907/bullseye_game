@@ -29,7 +29,7 @@ Safe Zone: The Safe Forest at the top of the screen is where hatchlings and eggs
 Hatching Time: Eggs hatch after 9 seconds, making the hatchlings vulnerable to monsters.
 
 
-* The game ends once you score 30 Hatchings, but you win ONLY if 6 or less hatchings were eaten.
+* The game ends once you Score 30 Hatchings saved, but you win ONLY if 6 or less hatchings were eaten.
 
 * If you save 30 hatchlings before 7 hatclings are eaten, you win the game.
 
